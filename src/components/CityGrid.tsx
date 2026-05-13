@@ -7,31 +7,21 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 const cityList = [
-  "Bengaluru", "Chennai", "Coimbatore", "Delhi NCR", "Gift City Gujarat", 
-  "Gurugram", "Hyderabad", "Kochi", "Kozhikode", "Mumbai", "Mysuru", "Pune"
+  "Greater Noida West", "Noida", "Gurugram", "Delhi NCR", "Ghaziabad", "Faridabad"
 ];
 
 const projectList = [
-  "SOBHA Altair", "SOBHA Woods", "SOBHA Inizio", "SOBHA Strada", 
-  "SOBHA Bela Encosta", "SOBHA Valley View", "SOBHA Crystal Meadows"
+  "AR Elite Residences", "Creative Urban Spaces", "Nebula Business Suites", "The Grand Arch", 
+  "NCR Investment Plots", "Luxury Studio Homes", "Smart City Apartments"
 ];
 
-const cities = [
-  {
-    name: "Hyderabad",
-    image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80",
-  },
-  {
-    name: "Thiruvananthapuram",
-    image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80",
-  },
-  {
-    name: "Bengaluru",
-    image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80",
-  }
-];
-
-export default function Locations({ title = "LOCATIONS" }: { title?: string }) {
+export default function Locations({ 
+  title = "LOCATIONS", 
+  locations 
+}: { 
+  title?: string;
+  locations: any[];
+}) {
   const [activeCity, setActiveCity] = useState("Select City");
   const [activeProject, setActiveProject] = useState("Select Project");
   const [isCityOpen, setIsCityOpen] = useState(false);
@@ -173,7 +163,7 @@ export default function Locations({ title = "LOCATIONS" }: { title?: string }) {
         {/* Cities Grid/Slider */}
         <div className="relative group">
           <div className="grid md:grid-cols-3 gap-8">
-            {cities.map((city, index) => (
+            {locations?.map((city, index) => (
               <motion.div
                 key={city.name}
                 initial={{ opacity: 0, y: 30 }}
@@ -188,16 +178,6 @@ export default function Locations({ title = "LOCATIONS" }: { title?: string }) {
                     alt={city.name} 
                     className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                   />
-                  {index === 0 && (
-                    <div className="absolute left-4 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
-                      <ChevronLeft size={20} className="text-white" />
-                    </div>
-                  )}
-                  {index === 2 && (
-                    <div className="absolute right-4 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
-                      <ChevronRight size={20} className="text-white" />
-                    </div>
-                  )}
                 </div>
                 <h4 className="text-black/60 text-base tracking-wide">{city.name}</h4>
               </motion.div>

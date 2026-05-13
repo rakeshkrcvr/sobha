@@ -13,8 +13,8 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "SOBHA Limited | Luxury Real Estate Company",
-  description: "Experience world-class luxury and craftsmanship with SOBHA Limited. Explore our residential and commercial projects across India.",
+  title: "AR Creative Homes | Premium Lifestyles & Smart Investments",
+  description: "Discover a new standard of luxury living and smart investments with AR Creative Homes. Premium residential and commercial properties in Greater Noida West and NCR.",
 };
 
 export default function RootLayout({

@@ -11,15 +11,15 @@ const menuData = {
     categories: [
       {
         title: "Philosophy",
-        links: ["Passion At Work", "The SOBHA Way", "Vision & Mission"]
+        links: ["Our Vision", "Core Values", "Mission Statement"]
       },
       {
         title: "Leadership",
-        links: ["About Our Founder", "Chairman's Message", "Board Of Directors", "Leadership Team"]
+        links: ["About Us", "Management Team", "Our Founder"]
       },
       {
         title: "Showcase",
-        links: ["The SOBHA Journey", "SOBHA Museum", "Awards & Honours"]
+        links: ["Our Journey", "Milestones", "Awards & Recognition"]
       }
     ]
   },
@@ -27,25 +27,21 @@ const menuData = {
     categories: [
       {
         title: "Residential",
-        links: ["Bengaluru", "Chennai", "Coimbatore", "Gift City Gandhinagar", "Greater Noida", "Gurugram", "Hyderabad", "Kochi", "Kozhikode", "Mumbai", "Mysuru", "Pune", "Thiruvananthapuram", "Thrissur"]
+        links: ["Luxury Apartments", "Studio Spaces", "Investment Plots", "Greater Noida West", "NCR Projects"]
       },
       {
         title: "Commercial",
-        links: ["SOBHA City Mall", "1 SOBHA"]
+        links: ["Business Centres", "Retail Spaces"]
       },
       {
-        title: "Contracting",
-        links: ["Business Services", "Portfolio", "Client Testimonial"]
-      },
-      {
-        title: "Manufacturing",
-        links: ["SOBHA Interiors", "Glazing And Metal Works", "Concrete Products", "SOBHA Restoplus"]
+        title: "Services",
+        links: ["Property Consultation", "Legal Assistance", "Home Loan Guidance", "After-Sales Support"]
       }
     ]
   }
 };
 
-export default function Navbar() {
+export default function Navbar({ logo }: { logo?: string }) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<string | null>(null);
@@ -84,10 +80,19 @@ export default function Navbar() {
         </button>
 
         {/* Center: Logo */}
-        <Link href="/" className="absolute left-1/2 -translate-x-1/2 z-50">
-          <h1 className="text-white text-xl md:text-2xl tracking-[0.2em] font-light font-serif">
-            SOBHA
-          </h1>
+        <Link href="/" className="absolute left-1/2 -translate-x-1/2 z-50 text-center">
+          {logo ? (
+            <img src={logo} alt="AR Creative Homes" className="h-10 md:h-12 w-auto object-contain" />
+          ) : (
+            <div className="flex flex-col">
+              <span className="text-white text-xl md:text-2xl tracking-[0.2em] font-bold font-serif leading-none">
+                AR CREATIVE
+              </span>
+              <span className="text-primary text-[8px] md:text-[10px] tracking-[0.5em] font-light uppercase">
+                HOMES
+              </span>
+            </div>
+          )}
         </Link>
 
         {/* Right: Search & Language */}
@@ -164,7 +169,7 @@ export default function Navbar() {
 
               {/* Bottom Section (Light Grey) */}
               <div className="bg-[#f2f2f2] px-10 py-12 flex flex-col gap-6">
-                {["CAREERS", "MEDIA CENTRE", "SUSTAINABILITY", "INVESTOR RELATIONS", "SOBHA PRIVILEGE"].map((item) => (
+                {["CAREERS", "MEDIA CENTRE", "SUSTAINABILITY", "PARTNERS", "OUR PROJECTS"].map((item) => (
                   <Link 
                     key={item} 
                     href="#" 
@@ -175,10 +180,10 @@ export default function Navbar() {
                 ))}
               </div>
 
-              {/* Floating "S" Icon in Menu */}
+              {/* Floating "AR" Icon in Menu */}
               <div className="absolute bottom-8 left-10">
                 <div className="w-12 h-12 rounded-full bg-white shadow-lg flex items-center justify-center border border-black/5">
-                  <span className="text-primary text-2xl font-serif italic">S</span>
+                  <span className="text-primary text-xl font-bold italic">AR</span>
                 </div>
               </div>
             </motion.div>

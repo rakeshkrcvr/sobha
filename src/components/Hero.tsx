@@ -4,23 +4,10 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-const slides = [
-  {
-    type: "video",
-    src: "https://www.sobha.com/wp-content/uploads/2026/03/Rivana-LP-with-Partnership-Logo-v3.mp4",
-  },
-  {
-    type: "image",
-    src: "https://www.sobha.com/wp-content/uploads/2026/04/crescent-banner-home-desktop.webp",
-  },
-  {
-    type: "image",
-    src: "https://www.sobha.com/wp-content/uploads/2026/01/home-altair-banner-desktop.webp",
-  }
-];
-
-export default function Hero() {
+export default function Hero({ slides }: { slides: any[] }) {
   const [current, setCurrent] = useState(0);
+
+  if (!slides || slides.length === 0) return null;
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -54,7 +41,7 @@ export default function Hero() {
             <img 
               src={slides[current].src} 
               className="h-full w-full object-cover brightness-[0.7]" 
-              alt="Sobha Project"
+              alt="AR Creative Homes Project"
             />
           )}
           <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60" />
@@ -87,14 +74,14 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* Floating "S" Icon (Bottom Left) */}
+      {/* Floating "AR" Icon (Bottom Left) */}
       <motion.div
         initial={{ opacity: 0, scale: 0.5 }}
         animate={{ opacity: 1, scale: 1 }}
         className="absolute bottom-10 left-10 z-20"
       >
         <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center shadow-2xl cursor-pointer hover:scale-110 transition-transform group">
-          <span className="text-black text-3xl font-serif italic group-hover:text-primary transition-colors">S</span>
+          <span className="text-black text-2xl font-bold italic group-hover:text-primary transition-colors">AR</span>
         </div>
       </motion.div>
 
@@ -108,13 +95,7 @@ export default function Hero() {
           className="text-center max-w-4xl"
         >
           <h2 className="text-white text-4xl md:text-7xl font-light font-serif tracking-tight leading-tight">
-            {current === 0 ? (
-              <>A World Where... <br/> <span className="italic">Luxuries Suffuse.</span></>
-            ) : current === 1 ? (
-              <>Redefining the <br/> <span className="italic">Art of Living.</span></>
-            ) : (
-              <>Experience the <br/> <span className="italic">Soul of SOBHA.</span></>
-            )}
+            {slides[current].title} <br/> <span className="italic">{slides[current].subtitle}</span>
           </h2>
         </motion.div>
       </div>

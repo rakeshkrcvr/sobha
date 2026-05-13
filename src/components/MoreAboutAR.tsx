@@ -7,25 +7,25 @@ import Link from "next/link";
 const items = [
   {
     title: "MEDIA CENTRE",
-    description: "A one touch source for news from the media lens. Get access to our brand assets – newsletters, press kit, and more.",
+    description: "Your source for the latest news and updates from AR Creative Homes. Access our brand assets and news coverage.",
     image: "https://images.unsplash.com/photo-1495020689067-958852a7765e?auto=format&fit=crop&q=80",
     link: "#"
   },
   {
-    title: "SOBHA PRIVILEGE",
-    description: "A one-of-a-kind rewards programme, SOBHA Privilege is feature loaded. Welcome your friends and relatives to the SOBHA family and get rewarded too.",
+    title: "SMART INVESTMENTS",
+    description: "Explore highly profitable investment opportunities across Greater Noida West and NCR, curated by our expert team.",
     image: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&q=80",
     link: "#"
   },
   {
-    title: "SOBHA BLOG",
-    description: "Get latest insights from the construction sector and in-depth views on real estate investment avenues, and more from our thought leaders.",
+    title: "AR BLOG",
+    description: "Get latest insights from the real estate sector and in-depth views on property investment avenues from our experts.",
     image: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&q=80",
     link: "#"
   }
 ];
 
-export default function MoreAboutSobha() {
+export default function MoreAboutAR() {
   return (
     <section className="py-24 bg-[#f8f8f8]">
       <div className="container mx-auto px-6">
@@ -36,7 +36,7 @@ export default function MoreAboutSobha() {
             viewport={{ once: true }}
             className="text-3xl md:text-4xl font-light tracking-[0.3em] text-black mb-4 uppercase"
           >
-            MORE ABOUT SOBHA
+            MORE ABOUT AR CREATIVE
           </motion.h2>
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
@@ -45,7 +45,7 @@ export default function MoreAboutSobha() {
             transition={{ delay: 0.1 }}
             className="text-black/40 text-sm tracking-wide"
           >
-            Builders in Bangalore - Real Estate Company in India
+            Premium Real Estate Brand in Greater Noida West & NCR
           </motion.p>
         </div>
 

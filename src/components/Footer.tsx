@@ -9,27 +9,34 @@ const footerLinks = {
   ],
   "Useful Links": [
     "Careers", "Media Centre", "Sustainability", "Investor Relations", 
-    "SOBHA Prosper", "SOBHA Privilege", "Contact Us"
+    "Our Projects", "Contact Us"
   ],
   Policies: [
     "Terms of Use", "Privacy Policy", "Disclaimer", "Blog", "RERA Disclaimer", "Sitemap"
   ]
 };
 
-export default function Footer() {
+import { getSettings } from "@/lib/actions";
+
+export default async function Footer() {
+  const settings = await getSettings();
+
   return (
     <footer className="bg-[#0a0a0a] text-white pt-20 pb-10 border-t border-white/5">
       <div className="container mx-auto px-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-20">
           <div>
-            <img 
-              src="https://www.sobha.com/wp-content/themes/sobha/images/SOBHA_White_new.svg" 
-              className="h-16 mb-8" 
-              alt="SOBHA" 
-            />
+            <div className="flex flex-col mb-8">
+              <span className="text-2xl font-bold tracking-tighter text-white uppercase">{settings.company_name?.split(' ')[0] || "AR"} {settings.company_name?.split(' ').slice(1).join(' ') || "CREATIVE"}</span>
+              <span className="text-primary text-xs tracking-[0.3em] font-light uppercase">HOMES</span>
+            </div>
             <p className="text-white/40 text-sm leading-relaxed mb-8">
-              A legacy of trust, reliability, and excellence deeply etched in the landscape of India. Master-crafting self-sustaining urban living spaces.
+              Redefining urban living with a perfect blend of luxury, innovation, and trust. Delivering high-quality residential and commercial properties.
             </p>
+            <div className="space-y-3 text-white/40 text-sm mb-8">
+              <p>{settings.address || "Office No 204, 2nd floor, Nebula business Centre, Knowledge park 5, Greater Noida (west) 201306"}</p>
+              <p>Email: {settings.email || "arcreativehomesindia@gmail.com"}</p>
+            </div>
             <div className="flex items-center gap-4 text-white/60">
               <Link href="#" className="hover:text-primary transition-colors"><MessageSquare size={20} /></Link>
               <Link href="#" className="hover:text-primary transition-colors"><Send size={20} /></Link>
@@ -58,13 +65,13 @@ export default function Footer() {
         <div className="border-t border-white/5 pt-10 flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex items-center gap-3 text-white/40 text-sm">
             <Phone size={16} className="text-primary" />
-            <span>080 46464500</span>
+            <span>{settings.phone || "+91 8384077107"}</span>
           </div>
           <p className="text-white/20 text-[10px] tracking-widest uppercase">
-            SOBHA Limited © Copyright 2026 All rights reserved
+            {settings.copyright || "AR Creative Homes © Copyright 2026 All rights reserved"}
           </p>
           <div className="text-white/20 text-[10px] tracking-widest uppercase text-center md:text-right">
-            CIN: L45201KA1995PLC018475
+            Crafting Spaces, Enriching Lives
           </div>
         </div>
       </div>
