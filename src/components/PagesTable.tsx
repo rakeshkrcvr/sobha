@@ -2,7 +2,20 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Edit, Search } from "lucide-react";
+import { Edit, Search, ExternalLink } from "lucide-react";
+
+const getLiveUrl = (slug: string) => {
+  if (slug === 'home') return '/';
+  const whatWeDoSlugs = [
+    'luxury-apartments', 'studio-spaces', 'investment-plots', 'greater-noida-west', 
+    'ncr-projects', 'business-centres', 'retail-spaces', 'property-consultation', 
+    'legal-assistance', 'home-loan-guidance', 'after-sales-support'
+  ];
+  if (whatWeDoSlugs.includes(slug)) {
+    return `/what-we-do/${slug}`;
+  }
+  return `/who-we-are/${slug}`;
+};
 
 export default function PagesTable({ initialPages }: { initialPages: any[] }) {
   const [searchTerm, setSearchTerm] = useState("");
@@ -59,7 +72,15 @@ export default function PagesTable({ initialPages }: { initialPages: any[] }) {
                       {page.template_type || "default"}
                     </span>
                   </td>
-                  <td className="px-8 py-6 text-right">
+                  <td className="px-8 py-6 text-right space-x-2">
+                    <a 
+                      href={getLiveUrl(page.slug)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 bg-gray-100 hover:bg-primary hover:text-white text-gray-600 px-4 py-2 rounded-lg text-sm font-bold transition-all cursor-pointer"
+                    >
+                      <ExternalLink size={14} /> View
+                    </a>
                     <Link 
                       href={`/admin/pages/${page.slug}`}
                       className="inline-flex items-center gap-2 bg-gray-100 hover:bg-black hover:text-white text-gray-600 px-4 py-2 rounded-lg text-sm font-bold transition-all"

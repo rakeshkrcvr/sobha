@@ -3,9 +3,22 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { getPageBySlug, updatePage, getPages } from "@/lib/actions";
-import { Save, Loader2, ArrowLeft, Plus, Trash2, ArrowUp, ArrowDown, Image as ImageIcon } from "lucide-react";
+import { Save, Loader2, ArrowLeft, Plus, Trash2, ArrowUp, ArrowDown, Image as ImageIcon, ExternalLink } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
+
+const getLiveUrl = (slug: string) => {
+  if (slug === 'home') return '/';
+  const whatWeDoSlugs = [
+    'luxury-apartments', 'studio-spaces', 'investment-plots', 'greater-noida-west', 
+    'ncr-projects', 'business-centres', 'retail-spaces', 'property-consultation', 
+    'legal-assistance', 'home-loan-guidance', 'after-sales-support'
+  ];
+  if (whatWeDoSlugs.includes(slug)) {
+    return `/what-we-do/${slug}`;
+  }
+  return `/who-we-are/${slug}`;
+};
 
 export default function EditPage({ params }: { params: Promise<{ slug: string }> }) {
   const router = useRouter();
@@ -213,7 +226,21 @@ export default function EditPage({ params }: { params: Promise<{ slug: string }>
 
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold text-gray-800">{slug === "new" ? "Create New Page" : `Edit ${page.title}`}</h1>
+            <div className="flex items-center gap-4">
+              <h1 className="text-3xl font-bold text-gray-800">{slug === "new" ? "Create New Page" : `Edit ${page.title}`}</h1>
+              {slug !== "new" && (
+                <a 
+                  href={getLiveUrl(page.slug)} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 bg-gray-100 hover:bg-primary hover:text-white text-gray-600 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer"
+                  title="View live page on website"
+                >
+                  <ExternalLink size={12} />
+                  <span>View Live</span>
+                </a>
+              )}
+            </div>
             <p className="text-gray-500">Manage page details and template content.</p>
           </div>
           {message && (
