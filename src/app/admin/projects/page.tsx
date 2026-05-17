@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { getProjects, addProject, updateProject, deleteProject } from "@/lib/actions";
-import { Plus, Edit2, Trash2, Building2, MapPin, Star, X, Loader2, Image as ImageIcon } from "lucide-react";
+import { Plus, Edit2, Trash2, Building2, MapPin, Star, X, Loader2, Image as ImageIcon, ExternalLink } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function ProjectsAdmin() {
@@ -113,6 +113,15 @@ export default function ProjectsAdmin() {
                 )}
               </div>
               <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
+                <a 
+                  href={`/residential?location=${encodeURIComponent(project.location_name || "")}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-10 h-10 rounded-full bg-white text-black flex items-center justify-center hover:bg-primary hover:text-white transition-all cursor-pointer"
+                  title="View live website page"
+                >
+                  <ExternalLink size={18} />
+                </a>
                 <button 
                   onClick={() => handleOpenModal(project)}
                   className="w-10 h-10 rounded-full bg-white text-black flex items-center justify-center hover:bg-primary hover:text-white transition-all"
@@ -156,9 +165,23 @@ export default function ProjectsAdmin() {
             >
               <div className="p-10">
                 <div className="flex justify-between items-center mb-8">
-                  <h2 className="text-2xl font-bold text-gray-800">
-                    {editingProject ? "Edit Project" : "Add New Project"}
-                  </h2>
+                  <div className="flex items-center gap-4">
+                    <h2 className="text-2xl font-bold text-gray-800">
+                      {editingProject ? "Edit Project" : "Add New Project"}
+                    </h2>
+                    {editingProject && formData.location_name && (
+                      <a 
+                        href={`/residential?location=${encodeURIComponent(formData.location_name)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 bg-gray-100 hover:bg-primary hover:text-white text-gray-600 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer"
+                        title="View live website page"
+                      >
+                        <ExternalLink size={12} />
+                        <span>View Live</span>
+                      </a>
+                    )}
+                  </div>
                   <button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-black">
                     <X size={24} />
                   </button>
