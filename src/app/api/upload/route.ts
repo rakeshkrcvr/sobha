@@ -11,6 +11,29 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
     }
 
+    // Try uploading to Catbox first (works perfectly on Vercel read-only filesystem!)
+    try {
+      const catboxForm = new FormData();
+      catboxForm.append('reqtype', 'fileupload');
+      catboxForm.append('fileToUpload', file);
+
+      const catboxResponse = await fetch('https://catbox.moe/user/api.php', {
+        method: 'POST',
+        body: catboxForm,
+      });
+
+      if (catboxResponse.ok) {
+        const url = await catboxResponse.text();
+        if (url && url.startsWith('http')) {
+          console.log('Uploaded successfully to Catbox:', url);
+          return NextResponse.json({ url: url.trim() });
+        }
+      }
+    } catch (catboxErr) {
+      console.warn('Catbox upload failed, falling back to local storage:', catboxErr);
+    }
+
+    // Fallback: Local Storage (only works locally, not on Vercel)
     const buffer = Buffer.from(await file.arrayBuffer());
     
     // Create safe filename
