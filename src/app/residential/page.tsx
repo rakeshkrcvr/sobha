@@ -2,13 +2,27 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import CityGrid from "@/components/CityGrid";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 import { getProjects, getSettings, getLocations } from "@/lib/actions";
 
-export default async function ResidentialPage() {
-  const projects = await getProjects();
+export const dynamic = "force-dynamic";
+
+export default async function ResidentialPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ location?: string }>;
+}) {
+  const params = await searchParams;
+  const selectedLocation = params?.location;
+
+  const allProjects = await getProjects();
+  const projects = selectedLocation 
+    ? allProjects.filter((p: any) => p.location_name?.toLowerCase() === selectedLocation.toLowerCase())
+    : allProjects;
+
   const settings = await getSettings();
-  const locations = await getLocations(); // I'll need to import this
+  const locations = await getLocations();
 
   const stats = [
     { label: "PREMIUM", value: "LIFESTYLE" },
@@ -55,11 +69,23 @@ export default async function ResidentialPage() {
           <aside className="w-full lg:w-64 flex-shrink-0">
             <h2 className="text-black text-sm font-bold tracking-[0.2em] mb-8 border-b border-black/10 pb-4 uppercase">LOCATIONS</h2>
             <div className="flex flex-col gap-4">
+              <Link 
+                href="/residential" 
+                className={cn(
+                  "text-[13px] hover:text-primary transition-colors tracking-wide uppercase",
+                  !selectedLocation ? "text-primary font-bold" : "text-black/60"
+                )}
+              >
+                All Locations
+              </Link>
               {locations.map((city: any) => (
                 <Link 
                   key={city.id} 
-                  href="#" 
-                  className="text-black/60 text-[13px] hover:text-primary transition-colors tracking-wide uppercase"
+                  href={`/residential?location=${encodeURIComponent(city.name)}`} 
+                  className={cn(
+                    "text-[13px] hover:text-primary transition-colors tracking-wide uppercase",
+                    selectedLocation?.toLowerCase() === city.name.toLowerCase() ? "text-primary font-bold" : "text-black/60"
+                  )}
                 >
                   {city.name}
                 </Link>
@@ -69,7 +95,7 @@ export default async function ResidentialPage() {
 
           {/* Content */}
           <div className="flex-1">
-            <div className="max-w-4xl">
+            <div className="max-w-7xl">
               <p className="text-black/60 text-[15px] leading-relaxed mb-20 text-justify">
                 {settings.company_name || "AR Creative Homes"} is a modern real estate brand committed to creating premium lifestyles and smart investment opportunities for the next generation. 
                 With a perfect blend of luxury, innovation, and trust, we specialize in delivering high-quality residential and commercial properties 
@@ -88,10 +114,10 @@ export default async function ResidentialPage() {
 
               <h3 className="text-black text-[13px] font-bold tracking-[0.3em] mb-12 uppercase">OUR PROJECTS</h3>
               
-              <div className="grid md:grid-cols-2 gap-12 mb-32">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12 mb-32">
                 {projects.map((project: any) => (
                   <div key={project.id} className="group cursor-pointer">
-                    <div className="aspect-[16/10] overflow-hidden mb-6">
+                    <div className="aspect-[16/11] overflow-hidden mb-6">
                       <img 
                         src={project.image} 
                         alt={project.title} 

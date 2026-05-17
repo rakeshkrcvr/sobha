@@ -208,7 +208,11 @@ export default function Navbar({ logo }: { logo?: string }) {
                           {cat.links.map((link) => (
                             <Link 
                               key={link} 
-                              href="#" 
+                              href={`/${activeTab.toLowerCase().replace(/ /g, "-")}/${link.toLowerCase().replace(/ /g, "-").replace(/&/g, "and")}`} 
+                              onClick={() => {
+                                setIsMenuOpen(false);
+                                setActiveTab(null);
+                              }}
                               className="text-white/60 text-[13px] hover:text-white transition-colors"
                             >
                               {link}

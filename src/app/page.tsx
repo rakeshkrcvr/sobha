@@ -7,8 +7,11 @@ import Footer from "@/components/Footer";
 
 import { getHeroSlides, getProjects, getLocations, getBrandContent, getSettings } from "@/lib/actions";
 
+export const dynamic = "force-dynamic";
+
 export default async function Home() {
   const slides = await getHeroSlides();
+  console.log("HOMEPAGE SLIDES:", JSON.stringify(slides, null, 2));
   const locations = await getLocations();
   const brandData = await getBrandContent('philosophy');
   const settings = await getSettings();

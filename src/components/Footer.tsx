@@ -1,12 +1,9 @@
 import Link from "next/link";
 import { MessageSquare, Send, Camera, Play, Briefcase, Phone } from "lucide-react";
 
+import { getSettings, getLocations } from "@/lib/actions";
+
 const footerLinks = {
-  Cities: [
-    "Bengaluru", "Chennai", "Coimbatore", "GIFT City", "Greater Noida", 
-    "Gurugram", "Hyderabad", "Kochi", "Kozhikode", "Mumbai", "Pune", 
-    "Thiruvananthapuram", "Thrissur"
-  ],
   "Useful Links": [
     "Careers", "Media Centre", "Sustainability", "Investor Relations", 
     "Our Projects", "Contact Us"
@@ -16,10 +13,10 @@ const footerLinks = {
   ]
 };
 
-import { getSettings } from "@/lib/actions";
-
 export default async function Footer() {
   const settings = await getSettings();
+  const locations = await getLocations();
+  const cities = locations.map((loc: any) => loc.name);
 
   return (
     <footer className="bg-[#0a0a0a] text-white pt-20 pb-10 border-t border-white/5">
@@ -44,6 +41,23 @@ export default async function Footer() {
               <Link href="#" className="hover:text-primary transition-colors"><Play size={20} /></Link>
               <Link href="#" className="hover:text-primary transition-colors"><Briefcase size={20} /></Link>
             </div>
+          </div>
+
+          {/* Cities Column (Dynamic) */}
+          <div>
+            <h4 className="text-sm font-bold tracking-widest uppercase mb-8 text-primary">Cities</h4>
+            <ul className="space-y-4">
+              {cities.map((city: string) => (
+                <li key={city}>
+                  <Link 
+                    href={`/residential?location=${encodeURIComponent(city)}`} 
+                    className="text-white/40 hover:text-white transition-colors text-sm"
+                  >
+                    {city}
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </div>
 
           {Object.entries(footerLinks).map(([title, links]) => (

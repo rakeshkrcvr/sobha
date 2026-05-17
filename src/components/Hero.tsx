@@ -12,41 +12,43 @@ export default function Hero({ slides }: { slides: any[] }) {
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrent((prev) => (prev + 1) % slides.length);
-    }, 8000);
+    }, 6000);
     return () => clearInterval(timer);
   }, []);
 
   return (
     <section className="relative h-screen w-full overflow-hidden bg-black">
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={current}
-          initial={{ opacity: 0, scale: 1.1 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 2, ease: "easeOut" }}
-          className="absolute inset-0 z-0"
+      {slides.map((slide, index) => (
+        <div
+          key={slide.id || index}
+          className={`absolute inset-0 z-0 transition-opacity duration-1000 ease-in-out ${
+            index === current ? "opacity-100" : "opacity-0 pointer-events-none"
+          }`}
         >
-          {slides[current].type === "video" ? (
-            <video
-              autoPlay
-              muted
-              loop
-              playsInline
-              className="h-full w-full object-cover brightness-[0.7]"
-            >
-              <source src={slides[current].src} type="video/mp4" />
-            </video>
+          {slide.type === "video" ? (
+            slide.src ? (
+              <video
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="h-full w-full object-cover brightness-[0.7]"
+              >
+                <source src={slide.src} type="video/mp4" />
+              </video>
+            ) : null
           ) : (
-            <img 
-              src={slides[current].src} 
-              className="h-full w-full object-cover brightness-[0.7]" 
-              alt="AR Creative Homes Project"
-            />
+            slide.src ? (
+              <img 
+                src={slide.src} 
+                className="h-full w-full object-cover brightness-[0.7]" 
+                alt="AR Creative Homes Project"
+              />
+            ) : null
           )}
           <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60" />
-        </motion.div>
-      </AnimatePresence>
+        </div>
+      ))}
 
       {/* Navigation Controls (Minimalist) */}
       <div className="absolute bottom-12 right-12 z-20 flex items-center gap-6">

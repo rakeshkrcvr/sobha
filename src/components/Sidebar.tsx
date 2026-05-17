@@ -10,7 +10,8 @@ import {
   Settings, 
   FileText,
   LogOut,
-  ChevronRight
+  ChevronRight,
+  Files
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -18,8 +19,9 @@ const sidebarLinks = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/hero", label: "Hero Slides", icon: ImageIcon },
   { href: "/admin/projects", label: "Projects", icon: Building2 },
-  { href: "/admin/locations", label: "Locations", icon: MapPin },
+  { href: "/admin/locations", label: "Cities", icon: MapPin },
   { href: "/admin/brand", label: "Brand Content", icon: FileText },
+  { href: "/admin/pages", label: "Pages", icon: Files },
   { href: "/admin/settings", label: "Settings", icon: Settings },
 ];
 

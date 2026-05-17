@@ -50,3 +50,13 @@ CREATE TABLE IF NOT EXISTS brand_content (
     content JSONB,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Pages
+CREATE TABLE IF NOT EXISTS pages (
+    id SERIAL PRIMARY KEY,
+    slug VARCHAR(255) UNIQUE NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    content JSONB,
+    template_type VARCHAR(50) DEFAULT 'default',
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

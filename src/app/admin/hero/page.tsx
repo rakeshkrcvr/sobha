@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { getHeroSlides, updateHeroSlide } from "@/lib/actions";
-import { Save, Play, Image as ImageIcon, Loader2, Type } from "lucide-react";
+import { getHeroSlides, updateHeroSlide, addHeroSlide, deleteHeroSlide } from "@/lib/actions";
+import { Save, Play, Image as ImageIcon, Loader2, Type, Plus, Trash2 } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function HeroAdmin() {
@@ -26,13 +26,40 @@ export default function HeroAdmin() {
     alert("Slide updated successfully!");
   };
 
+  const handleAddSlide = async () => {
+    setSaving(true);
+    await addHeroSlide();
+    const data = await getHeroSlides();
+    setSlides(data);
+    setSaving(false);
+  };
+
+  const handleDeleteSlide = async (id: number) => {
+    if (confirm("Are you sure you want to delete this slide?")) {
+      setSaving(true);
+      await deleteHeroSlide(id);
+      const data = await getHeroSlides();
+      setSlides(data);
+      setSaving(false);
+    }
+  };
+
   if (loading) return <div className="flex items-center justify-center h-64"><Loader2 className="animate-spin text-primary" size={40} /></div>;
 
   return (
     <div className="space-y-10">
-      <div>
-        <h1 className="text-3xl font-bold text-gray-800">Hero Slides</h1>
-        <p className="text-gray-500">Edit the video and images shown on the homepage hero section.</p>
+      <div className="flex justify-between items-end">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-800">Hero Slides</h1>
+          <p className="text-gray-500">Edit the video and images shown on the homepage hero section.</p>
+        </div>
+        <button 
+          onClick={handleAddSlide}
+          disabled={saving}
+          className="bg-black text-white px-6 py-3 rounded-2xl text-sm font-bold hover:bg-primary transition-all flex items-center gap-2 disabled:opacity-50"
+        >
+          <Plus size={16} /> Add New Slide
+        </button>
       </div>
 
       <div className="grid grid-cols-1 gap-12">
@@ -84,53 +111,110 @@ export default function HeroAdmin() {
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
-                  <ImageIcon size={14} /> Media Source ({slide.type})
-                </label>
-                <div className="flex items-center gap-4">
-                  <div className="flex-1">
-                    <input 
-                      type="text"
-                      value={slide.src}
-                      onChange={(e) => {
-                        const newSlides = [...slides];
-                        newSlides[index].src = e.target.value;
-                        setSlides(newSlides);
-                      }}
-                      className="w-full bg-gray-50 border-none rounded-2xl px-5 py-4 text-sm"
-                      placeholder="Media URL or Upload..."
-                    />
-                  </div>
-                  {slide.type === 'image' && (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="space-y-2 md:col-span-1">
+                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
+                    <ImageIcon size={14} /> Slide Type
+                  </label>
+                  <select 
+                    value={slide.type}
+                    onChange={(e) => {
+                      const newSlides = [...slides];
+                      newSlides[index].type = e.target.value;
+                      setSlides(newSlides);
+                    }}
+                    className="w-full bg-gray-50 border-none rounded-2xl px-5 py-4 text-sm focus:ring-2 focus:ring-primary/20"
+                  >
+                    <option value="image">Image</option>
+                    <option value="video">Video</option>
+                  </select>
+                </div>
+
+                <div className="space-y-2 md:col-span-2">
+                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
+                    <ImageIcon size={14} /> Media Source ({slide.type})
+                  </label>
+                  <div className="flex items-center gap-4">
+                    <div className="flex-1">
+                      <input 
+                        type="text"
+                        value={slide.src}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          const newSlides = [...slides];
+                          newSlides[index].src = val;
+                          
+                          // Auto-detect type
+                          const lowerVal = val.toLowerCase();
+                          if (lowerVal.includes('.mp4') || lowerVal.includes('vimeo') || lowerVal.includes('youtube') || lowerVal.includes('video')) {
+                            newSlides[index].type = 'video';
+                          } else if (lowerVal.includes('.jpg') || lowerVal.includes('.png') || lowerVal.includes('.jpeg') || lowerVal.includes('unsplash') || lowerVal.includes('image')) {
+                            newSlides[index].type = 'image';
+                          }
+                          
+                          setSlides(newSlides);
+                        }}
+                        className="w-full bg-gray-50 border-none rounded-2xl px-5 py-4 text-sm"
+                        placeholder="Media URL or Upload..."
+                      />
+                    </div>
                     <label className="bg-black text-white px-6 py-4 rounded-2xl cursor-pointer hover:bg-primary transition-all flex items-center gap-2 text-xs font-bold whitespace-nowrap">
-                      <ImageIcon size={16} /> Upload
+                      {slide.type === 'video' ? <Play size={16} /> : <ImageIcon size={16} />} Upload
                       <input 
                         type="file" 
                         className="hidden" 
-                        accept="image/*"
-                        onChange={(e) => {
+                        accept="image/*,video/*"
+                        onChange={async (e) => {
                           const file = e.target.files?.[0];
                           if (file) {
-                            const reader = new FileReader();
-                            reader.onloadend = () => {
-                              const newSlides = [...slides];
-                              newSlides[index].src = reader.result as string;
-                              setSlides(newSlides);
-                            };
-                            reader.readAsDataURL(file);
+                            const isVideo = file.type.startsWith('video/');
+                            
+                            // Immediately set type to reflect user intent
+                            const newSlides = [...slides];
+                            newSlides[index].type = isVideo ? 'video' : 'image';
+                            newSlides[index].src = 'Uploading...';
+                            setSlides(newSlides);
+
+                            const formData = new FormData();
+                            formData.append('file', file);
+
+                            try {
+                              const res = await fetch('/api/upload', {
+                                method: 'POST',
+                                body: formData
+                              });
+                              const data = await res.json();
+                              
+                              if (data.url) {
+                                const finalSlides = [...slides];
+                                finalSlides[index].src = data.url;
+                                setSlides(finalSlides);
+                              } else {
+                                alert("Upload failed");
+                              }
+                            } catch (error) {
+                              console.error(error);
+                              alert("Upload failed");
+                            }
                           }
                         }}
                       />
                     </label>
-                  )}
+                  </div>
                 </div>
               </div>
 
-              <div className="flex justify-end pt-4">
+              <div className="flex justify-end pt-4 gap-4">
+                <button 
+                  onClick={() => handleDeleteSlide(slide.id)}
+                  disabled={saving || slides.length <= 1}
+                  className="bg-red-50 text-red-500 px-6 py-3 rounded-2xl font-bold hover:bg-red-500 hover:text-white transition-all flex items-center gap-2 disabled:opacity-50"
+                >
+                  <Trash2 size={18} /> Delete
+                </button>
                 <button 
                   onClick={() => handleUpdate(slide.id, index)}
-                  disabled={saving}
+                  disabled={saving || slide.src === 'Uploading...'}
                   className="bg-black text-white px-8 py-3 rounded-2xl font-bold hover:bg-primary transition-all flex items-center gap-2 disabled:opacity-50"
                 >
                   <Save size={18} /> Update Slide {index + 1}

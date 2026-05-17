@@ -30,6 +30,8 @@ export default function Locations({
   const cityRef = useRef<HTMLDivElement>(null);
   const projectRef = useRef<HTMLDivElement>(null);
 
+  const cityList = locations?.map((l: any) => l.name) || [];
+
   // Close dropdowns on outside click
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -154,9 +156,11 @@ export default function Locations({
               </AnimatePresence>
             </div>
 
-            <button className="bg-[#999999] hover:bg-black w-12 h-12 flex flex-shrink-0 items-center justify-center transition-colors">
-              <Search size={20} className="text-white" />
-            </button>
+            <Link href={activeCity !== "Select City" ? `/residential?location=${encodeURIComponent(activeCity)}` : "/residential"}>
+              <button className="bg-[#999999] hover:bg-black w-12 h-12 flex flex-shrink-0 items-center justify-center transition-colors">
+                <Search size={20} className="text-white" />
+              </button>
+            </Link>
           </div>
         </div>
 
@@ -172,14 +176,16 @@ export default function Locations({
                 transition={{ delay: index * 0.1 }}
                 className="flex flex-col items-center"
               >
-                <div className="relative w-full aspect-[16/18] overflow-hidden mb-6">
-                  <img 
-                    src={city.image} 
-                    alt={city.name} 
-                    className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
-                  />
-                </div>
-                <h4 className="text-black/60 text-base tracking-wide">{city.name}</h4>
+                <Link href={`/residential?location=${encodeURIComponent(city.name)}`} className="w-full text-center group/card">
+                  <div className="relative w-full aspect-[16/18] overflow-hidden mb-6">
+                    <img 
+                      src={city.image} 
+                      alt={city.name} 
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover/card:scale-105"
+                    />
+                  </div>
+                  <h4 className="text-black/60 group-hover/card:text-primary transition-colors text-base tracking-wide uppercase">{city.name}</h4>
+                </Link>
               </motion.div>
             ))}
           </div>
