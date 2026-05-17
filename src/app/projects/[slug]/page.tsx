@@ -6,6 +6,9 @@ import { MapPin, Building2, Calendar, ShieldCheck, Compass, CheckCircle2, Chevro
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AMENITIES, getAmenityIcon } from "@/lib/amenities";
+import ProjectGallery from "@/components/ProjectGallery";
+import ProjectFloorPlans from "@/components/ProjectFloorPlans";
+import ProjectLocation from "@/components/ProjectLocation";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -35,6 +38,57 @@ export default async function ProjectDetailPage({ params }: PageProps) {
 
   if (!project) {
     notFound();
+  }
+
+  // Safely parse amenities in case they are double-serialized or stored as a string
+  let projectAmenities: string[] = [];
+  if (project.amenities) {
+    if (Array.isArray(project.amenities)) {
+      projectAmenities = project.amenities;
+    } else if (typeof project.amenities === 'string') {
+      try {
+        const parsed = JSON.parse(project.amenities);
+        if (Array.isArray(parsed)) {
+          projectAmenities = parsed;
+        }
+      } catch (e) {
+        console.error("Failed to parse amenities:", e);
+      }
+    }
+  }
+
+  // Safely parse gallery in case it is double-serialized or stored as a string
+  let projectGallery: string[] = [];
+  if (project.gallery) {
+    if (Array.isArray(project.gallery)) {
+      projectGallery = project.gallery;
+    } else if (typeof project.gallery === 'string') {
+      try {
+        const parsed = JSON.parse(project.gallery);
+        if (Array.isArray(parsed)) {
+          projectGallery = parsed;
+        }
+      } catch (e) {
+        console.error("Failed to parse gallery:", e);
+      }
+    }
+  }
+
+  // Safely parse floor plans in case they are double-serialized or stored as a string
+  let projectFloorPlans: any[] = [];
+  if (project.floor_plans) {
+    if (Array.isArray(project.floor_plans)) {
+      projectFloorPlans = project.floor_plans;
+    } else if (typeof project.floor_plans === 'string') {
+      try {
+        const parsed = JSON.parse(project.floor_plans);
+        if (Array.isArray(parsed)) {
+          projectFloorPlans = parsed;
+        }
+      } catch (e) {
+        console.error("Failed to parse floor plans:", e);
+      }
+    }
   }
 
   // Generate some realistic premium features based on category/location
@@ -195,7 +249,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
               </div>
 
               {/* World-Class Selected Amenities Section (Renders right below Premium Location Value Card) */}
-              {project.amenities && Array.isArray(project.amenities) && project.amenities.length > 0 && (
+              {projectAmenities && projectAmenities.length > 0 && (
                 <div className="space-y-8 pt-10 border-t border-black/5 mt-10">
                   <div className="inline-flex items-center gap-2 mb-2">
                     <span className="w-6 h-px bg-primary" />
@@ -203,7 +257,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
                   </div>
                   <h3 className="text-sm font-bold text-black uppercase tracking-[0.2em] mb-6">Premium Project Amenities</h3>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                    {project.amenities.map((amenityId: string) => {
+                    {projectAmenities.map((amenityId: string) => {
                       const amenity = AMENITIES.find(a => a.id === amenityId);
                       if (!amenity) return null;
                       const IconComponent = getAmenityIcon(amenity.iconName);
@@ -222,6 +276,16 @@ export default async function ProjectDetailPage({ params }: PageProps) {
                   </div>
                 </div>
               )}
+
+              {/* Project Gallery Section (Renders right below Amenities Section) */}
+              {projectGallery && projectGallery.length > 0 && (
+                <ProjectGallery images={projectGallery} />
+              )}
+
+              {/* Project Floor Plans Section (Renders right below Gallery Section) */}
+              {projectFloorPlans && projectFloorPlans.length > 0 && (
+                <ProjectFloorPlans plans={projectFloorPlans} />
+              )}
             </div>
 
             {/* Right: Premium Dynamic Inquiry Sidebar */}
@@ -231,8 +295,15 @@ export default async function ProjectDetailPage({ params }: PageProps) {
                 projectLocation={project.location_name || "NCR"} 
               />
             </div>
-            
           </div>
+
+          {/* Dynamic High-Fidelity Location Advantages Section (Renders right below Floor Plans container) */}
+          <ProjectLocation 
+            projectTitle={project.title} 
+            locationName={project.location_name || "NCR"} 
+            mapIframe={project.map_iframe}
+            locationAdvantages={project.location_advantages}
+          />
         </div>
       </section>
 

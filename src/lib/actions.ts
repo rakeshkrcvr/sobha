@@ -80,11 +80,14 @@ export async function addProject(data: any) {
     counter++;
   }
 
-  const amenitiesJson = Array.isArray(data.amenities) ? JSON.stringify(data.amenities) : '[]';
+  const amenitiesArray = Array.isArray(data.amenities) ? data.amenities : [];
+  const galleryArray = Array.isArray(data.gallery) ? data.gallery : [];
+  const floorPlansArray = Array.isArray(data.floor_plans) ? data.floor_plans : [];
+  const locationAdvantagesArray = Array.isArray(data.location_advantages) ? data.location_advantages : [];
 
   await sql`
-    INSERT INTO projects (title, slug, image, category, location_name, description, is_featured, amenities)
-    VALUES (${data.title}, ${slug}, ${data.image}, ${data.category}, ${data.location_name}, ${data.description}, ${data.is_featured}, ${amenitiesJson})
+    INSERT INTO projects (title, slug, image, category, location_name, description, is_featured, amenities, gallery, floor_plans, map_iframe, location_advantages)
+    VALUES (${data.title}, ${slug}, ${data.image}, ${data.category}, ${data.location_name}, ${data.description}, ${data.is_featured}, ${sql.json(amenitiesArray)}, ${sql.json(galleryArray)}, ${sql.json(floorPlansArray)}, ${data.map_iframe || null}, ${sql.json(locationAdvantagesArray)})
   `;
   revalidatePath("/");
   revalidatePath("/residential");
@@ -101,13 +104,18 @@ export async function updateProject(id: number, data: any) {
     counter++;
   }
 
-  const amenitiesJson = Array.isArray(data.amenities) ? JSON.stringify(data.amenities) : '[]';
+  const amenitiesArray = Array.isArray(data.amenities) ? data.amenities : [];
+  const galleryArray = Array.isArray(data.gallery) ? data.gallery : [];
+  const floorPlansArray = Array.isArray(data.floor_plans) ? data.floor_plans : [];
+  const locationAdvantagesArray = Array.isArray(data.location_advantages) ? data.location_advantages : [];
 
   await sql`
     UPDATE projects 
     SET title = ${data.title}, slug = ${slug}, image = ${data.image}, category = ${data.category}, 
         location_name = ${data.location_name}, description = ${data.description}, 
-        is_featured = ${data.is_featured}, amenities = ${amenitiesJson}
+        is_featured = ${data.is_featured}, amenities = ${sql.json(amenitiesArray)},
+        gallery = ${sql.json(galleryArray)}, floor_plans = ${sql.json(floorPlansArray)},
+        map_iframe = ${data.map_iframe || null}, location_advantages = ${sql.json(locationAdvantagesArray)}
     WHERE id = ${id}
   `;
   revalidatePath("/");

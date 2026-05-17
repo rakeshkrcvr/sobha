@@ -29,6 +29,8 @@ CREATE TABLE IF NOT EXISTS projects (
     is_featured BOOLEAN DEFAULT FALSE,
     is_active BOOLEAN DEFAULT TRUE,
     amenities JSONB DEFAULT '[]',
+    gallery JSONB DEFAULT '[]',
+    floor_plans JSONB DEFAULT '[]',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
