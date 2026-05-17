@@ -1,6 +1,7 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import CityGrid from "@/components/CityGrid";
+import ProjectsGrid from "@/components/ProjectsGrid";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
@@ -113,21 +114,7 @@ export default async function ResidentialPage({
               </div>
 
               <h3 className="text-black text-[13px] font-bold tracking-[0.3em] mb-12 uppercase">OUR PROJECTS</h3>
-              
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12 mb-32">
-                {projects.map((project: any) => (
-                  <div key={project.id} className="group cursor-pointer">
-                    <div className="aspect-[16/11] overflow-hidden mb-6">
-                      <img 
-                        src={project.image} 
-                        alt={project.title} 
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                      />
-                    </div>
-                    <h4 className="text-center text-black/60 text-[13px] tracking-widest uppercase">{project.title}</h4>
-                  </div>
-                ))}
-              </div>
+              <ProjectsGrid projects={projects} />
             </div>
           </div>
         </div>
