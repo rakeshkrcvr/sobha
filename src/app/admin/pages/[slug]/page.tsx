@@ -119,6 +119,23 @@ export default function EditPage({ params }: { params: Promise<{ slug: string }>
       newSection = { type, title: "", items: [{ title: "", desc: "" }] };
     } else if (type === 'founder_list') {
       newSection = { type, title: "", items: [{ name: "", designation: "", quote: "", image: "" }] };
+    } else if (type === 'home_slider') {
+      newSection = { type, items: [{ src: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80", type: "image", title: "Luxury Redefined", subtitle: "AR Creative Homes" }] };
+    } else if (type === 'cities_grid') {
+      newSection = { type, title: "Explore Our Cities" };
+    } else if (type === 'brand_philosophy') {
+      newSection = { type, title: "Our Philosophy", subtitle: "Crafting Timeless Lifestyles", description: "At AR Creative Homes, our philosophy is anchored in transparency, luxury finishes, and highly reliable structural designs.", image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80" };
+    } else if (type === 'more_about_ar') {
+      newSection = { 
+        type, 
+        title: "MORE ABOUT AR CREATIVE", 
+        subtitle: "Premium Real Estate Brand in Greater Noida West & NCR",
+        items: [
+          { title: "MEDIA CENTRE", description: "Your source for the latest news and updates from AR Creative Homes. Access our brand assets and news coverage.", image: "https://images.unsplash.com/photo-1495020689067-958852a7765e?auto=format&fit=crop&q=80", link: "#" },
+          { title: "SMART INVESTMENTS", description: "Explore highly profitable investment opportunities across Greater Noida West and NCR, curated by our expert team.", image: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&q=80", link: "#" },
+          { title: "AR BLOG", description: "Get latest insights from the real estate sector and in-depth views on property investment avenues from our experts.", image: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&q=80", link: "#" }
+        ]
+      };
     }
     setPage({ ...page, content: [...sections, newSection] });
   };
@@ -271,6 +288,10 @@ export default function EditPage({ params }: { params: Promise<{ slug: string }>
                   className="bg-black text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-primary transition-all cursor-pointer"
                 >
                   <option value="">+ Add Section...</option>
+                  <option value="home_slider">Homepage Hero Slider</option>
+                  <option value="cities_grid">Cities Navigation Grid</option>
+                  <option value="brand_philosophy">Brand Philosophy Block</option>
+                  <option value="more_about_ar">More About AR Grid</option>
                   <option value="hero">Hero Header Section</option>
                   <option value="text">Centered Text Section</option>
                   <option value="image_text">Image with Text Section</option>
@@ -676,6 +697,348 @@ export default function EditPage({ params }: { params: Promise<{ slug: string }>
                             className="text-xs font-bold text-primary hover:text-black transition-colors"
                           >
                             + Add Team Profile
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* HOMEPAGE HERO SLIDER SECTION FIELDS */}
+                    {section.type === 'home_slider' && (
+                      <div className="grid grid-cols-1 gap-6">
+                        <div className="space-y-4">
+                          <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block">Slider Media Items (Images or Videos)</label>
+                          {(section.items || []).map((slide: any, sIdx: number) => (
+                            <div key={sIdx} className="p-4 bg-white rounded-xl border border-gray-200 relative group/slide flex flex-col gap-4">
+                              <button 
+                                type="button"
+                                onClick={() => {
+                                  const items = [...(section.items || [])];
+                                  items.splice(sIdx, 1);
+                                  handleSectionChange(sIndex, 'items', items);
+                                }}
+                                className="absolute top-2 right-2 text-red-400 hover:text-red-600 opacity-0 group-hover/slide:opacity-100 transition-opacity"
+                              >
+                                <Trash2 size={12} />
+                              </button>
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="space-y-1">
+                                  <label className="text-[9px] font-bold text-gray-400">Media Type</label>
+                                  <select 
+                                    value={slide.type || "image"} 
+                                    onChange={(e) => {
+                                      const items = [...(section.items || [])];
+                                      items[sIdx].type = e.target.value;
+                                      handleSectionChange(sIndex, 'items', items);
+                                    }}
+                                    className="w-full bg-gray-50 border-none rounded-lg px-3 py-2 text-xs font-bold"
+                                  >
+                                    <option value="image">Image Slide</option>
+                                    <option value="video">Video Slide</option>
+                                  </select>
+                                </div>
+                                <div className="space-y-1">
+                                  <label className="text-[9px] font-bold text-gray-400">Upload Media</label>
+                                  <div className="flex gap-2">
+                                    <input 
+                                      type="text" 
+                                      value={slide.src || ""} 
+                                      onChange={(e) => {
+                                        const items = [...(section.items || [])];
+                                        items[sIdx].src = e.target.value;
+                                        handleSectionChange(sIndex, 'items', items);
+                                      }}
+                                      className="flex-1 bg-gray-50 border-none rounded-lg px-3 py-2 text-xs font-mono"
+                                      placeholder="File URL"
+                                    />
+                                    <label className="bg-black text-white px-3 py-2 rounded-lg cursor-pointer hover:bg-primary font-bold text-[10px] flex items-center">
+                                      Upload
+                                      <input 
+                                        type="file" 
+                                        className="hidden" 
+                                        accept={slide.type === 'video' ? 'video/*' : 'image/*'}
+                                        onChange={async (e) => {
+                                          const file = e.target.files?.[0];
+                                          if (file) {
+                                            const items = [...(section.items || [])];
+                                            items[sIdx].src = 'Uploading...';
+                                            handleSectionChange(sIndex, 'items', items);
+
+                                            const formData = new FormData();
+                                            formData.append('file', file);
+                                            const res = await fetch('/api/upload', { method: 'POST', body: formData });
+                                            const d = await res.json();
+                                            if (d.url) {
+                                              items[sIdx].src = d.url;
+                                              handleSectionChange(sIndex, 'items', items);
+                                            } else alert("Upload failed");
+                                          }
+                                        }}
+                                      />
+                                    </label>
+                                  </div>
+                                  {slide.src && slide.src !== 'Uploading...' && (
+                                    slide.type === 'video' ? (
+                                      <video src={slide.src} className="h-10 w-20 object-cover rounded-lg border mt-1" muted playsInline />
+                                    ) : (
+                                      <img src={slide.src} className="h-10 w-20 object-cover rounded-lg border mt-1" />
+                                    )
+                                  )}
+                                </div>
+                              </div>
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <input 
+                                  type="text" 
+                                  value={slide.title || ""} 
+                                  onChange={(e) => {
+                                    const items = [...(section.items || [])];
+                                    items[sIdx].title = e.target.value;
+                                    handleSectionChange(sIndex, 'items', items);
+                                  }}
+                                  className="w-full bg-gray-50 border-none rounded-lg px-3 py-2 text-xs font-bold"
+                                  placeholder="Slide Title (Main heading)"
+                                />
+                                <input 
+                                  type="text" 
+                                  value={slide.subtitle || ""} 
+                                  onChange={(e) => {
+                                    const items = [...(section.items || [])];
+                                    items[sIdx].subtitle = e.target.value;
+                                    handleSectionChange(sIndex, 'items', items);
+                                  }}
+                                  className="w-full bg-gray-50 border-none rounded-lg px-3 py-2 text-xs"
+                                  placeholder="Slide Subtitle"
+                                />
+                              </div>
+                            </div>
+                          ))}
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const items = [...(section.items || []), { src: "", type: "image", title: "", subtitle: "" }];
+                              handleSectionChange(sIndex, 'items', items);
+                            }}
+                            className="text-xs font-bold text-primary hover:text-black transition-colors"
+                          >
+                            + Add Slide
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* CITIES NAVIGATION GRID SECTION FIELDS */}
+                    {section.type === 'cities_grid' && (
+                      <div className="grid grid-cols-1 gap-6">
+                        <div className="space-y-2">
+                          <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Section Header Title</label>
+                          <input 
+                            type="text"
+                            value={section.title || ""}
+                            onChange={(e) => handleSectionChange(sIndex, 'title', e.target.value)}
+                            className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm font-semibold"
+                            placeholder="e.g. Choose Your Lifestyle City"
+                          />
+                        </div>
+                        <p className="text-xs text-gray-400 font-medium">This block dynamically displays the registered Cities & Projects from your active cities table.</p>
+                      </div>
+                    )}
+
+                    {/* BRAND PHILOSOPHY BLOCK SECTION FIELDS */}
+                    {section.type === 'brand_philosophy' && (
+                      <div className="grid grid-cols-1 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Philosophy Title</label>
+                            <input 
+                              type="text"
+                              value={section.title || ""}
+                              onChange={(e) => handleSectionChange(sIndex, 'title', e.target.value)}
+                              className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm font-semibold"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Philosophy Subtitle</label>
+                            <input 
+                              type="text"
+                              value={section.subtitle || ""}
+                              onChange={(e) => handleSectionChange(sIndex, 'subtitle', e.target.value)}
+                              className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm font-semibold"
+                            />
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Detailed Philosophy Description</label>
+                          <textarea 
+                            rows={4}
+                            value={section.description || ""}
+                            onChange={(e) => handleSectionChange(sIndex, 'description', e.target.value)}
+                            className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm resize-none"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Philosophy Highlight Image URL</label>
+                          <div className="flex gap-4">
+                            <input 
+                              type="text"
+                              value={section.image || ""}
+                              onChange={(e) => handleSectionChange(sIndex, 'image', e.target.value)}
+                              className="flex-1 bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm font-mono"
+                            />
+                            <label className="bg-black text-white px-5 py-3 rounded-xl cursor-pointer hover:bg-primary font-bold text-xs flex items-center gap-1.5">
+                              Upload
+                              <input 
+                                type="file" 
+                                className="hidden" 
+                                onChange={async (e) => {
+                                  const file = e.target.files?.[0];
+                                  if (file) {
+                                    handleSectionChange(sIndex, 'image', 'Uploading...');
+                                    const formData = new FormData();
+                                    formData.append('file', file);
+                                    const res = await fetch('/api/upload', { method: 'POST', body: formData });
+                                    const d = await res.json();
+                                    if (d.url) handleSectionChange(sIndex, 'image', d.url);
+                                    else alert("Upload failed");
+                                  }
+                                }}
+                              />
+                            </label>
+                          </div>
+                          {section.image && section.image !== 'Uploading...' && (
+                            <img src={section.image} className="h-20 w-36 object-cover rounded-xl mt-2 border" />
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* MORE ABOUT AR GRID SECTION FIELDS */}
+                    {section.type === 'more_about_ar' && (
+                      <div className="grid grid-cols-1 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Section Title</label>
+                            <input 
+                              type="text"
+                              value={section.title || ""}
+                              onChange={(e) => handleSectionChange(sIndex, 'title', e.target.value)}
+                              className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm font-semibold"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Section Subtitle</label>
+                            <input 
+                              type="text"
+                              value={section.subtitle || ""}
+                              onChange={(e) => handleSectionChange(sIndex, 'subtitle', e.target.value)}
+                              className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm font-semibold"
+                            />
+                          </div>
+                        </div>
+                        <div className="space-y-4">
+                          <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block">Showcase Items (Maximum 3 recommended)</label>
+                          {(section.items || []).map((item: any, iIdx: number) => (
+                            <div key={iIdx} className="p-4 bg-white rounded-xl border border-gray-200 relative group/showcase flex flex-col gap-4">
+                              <button 
+                                type="button"
+                                onClick={() => {
+                                  const items = [...(section.items || [])];
+                                  items.splice(iIdx, 1);
+                                  handleSectionChange(sIndex, 'items', items);
+                                }}
+                                className="absolute top-2 right-2 text-red-400 hover:text-red-600 opacity-0 group-hover/showcase:opacity-100 transition-opacity"
+                              >
+                                <Trash2 size={12} />
+                              </button>
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <input 
+                                  type="text" 
+                                  value={item.title || ""} 
+                                  onChange={(e) => {
+                                    const items = [...(section.items || [])];
+                                    items[iIdx].title = e.target.value;
+                                    handleSectionChange(sIndex, 'items', items);
+                                  }}
+                                  className="w-full bg-gray-50 border-none rounded-lg px-3 py-2 text-xs font-bold"
+                                  placeholder="Card Title (e.g. MEDIA CENTRE)"
+                                />
+                                <input 
+                                  type="text" 
+                                  value={item.link || ""} 
+                                  onChange={(e) => {
+                                    const items = [...(section.items || [])];
+                                    items[iIdx].link = e.target.value;
+                                    handleSectionChange(sIndex, 'items', items);
+                                  }}
+                                  className="w-full bg-gray-50 border-none rounded-lg px-3 py-2 text-xs font-mono"
+                                  placeholder="Link (e.g. # or /blog)"
+                                />
+                              </div>
+                              <div className="space-y-2">
+                                <textarea 
+                                  rows={2}
+                                  value={item.description || ""} 
+                                  onChange={(e) => {
+                                    const items = [...(section.items || [])];
+                                    items[iIdx].description = e.target.value;
+                                    handleSectionChange(sIndex, 'items', items);
+                                  }}
+                                  className="w-full bg-gray-50 border-none rounded-lg px-3 py-2 text-xs"
+                                  placeholder="Card Description..."
+                                />
+                              </div>
+                              <div className="space-y-1">
+                                <label className="text-[9px] font-bold text-gray-400">Card Image URL</label>
+                                <div className="flex gap-2">
+                                  <input 
+                                    type="text" 
+                                    value={item.image || ""} 
+                                    onChange={(e) => {
+                                      const items = [...(section.items || [])];
+                                      items[iIdx].image = e.target.value;
+                                      handleSectionChange(sIndex, 'items', items);
+                                    }}
+                                    className="flex-1 bg-gray-50 border-none rounded-lg px-3 py-2 text-xs font-mono"
+                                    placeholder="Image URL"
+                                  />
+                                  <label className="bg-black text-white px-3 py-2 rounded-lg cursor-pointer hover:bg-primary font-bold text-[10px] flex items-center">
+                                    Upload
+                                    <input 
+                                      type="file" 
+                                      className="hidden" 
+                                      onChange={async (e) => {
+                                        const file = e.target.files?.[0];
+                                        if (file) {
+                                          const items = [...(section.items || [])];
+                                          items[iIdx].image = 'Uploading...';
+                                          handleSectionChange(sIndex, 'items', items);
+
+                                          const formData = new FormData();
+                                          formData.append('file', file);
+                                          const res = await fetch('/api/upload', { method: 'POST', body: formData });
+                                          const d = await res.json();
+                                          if (d.url) {
+                                            items[iIdx].image = d.url;
+                                            handleSectionChange(sIndex, 'items', items);
+                                          } else alert("Upload failed");
+                                        }
+                                      }}
+                                    />
+                                  </label>
+                                </div>
+                                {item.image && item.image !== 'Uploading...' && (
+                                  <img src={item.image} className="h-10 w-20 object-cover rounded-lg border mt-1" />
+                                )}
+                              </div>
+                            </div>
+                          ))}
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const items = [...(section.items || []), { title: "", description: "", image: "", link: "#" }];
+                              handleSectionChange(sIndex, 'items', items);
+                            }}
+                            className="text-xs font-bold text-primary hover:text-black transition-colors"
+                          >
+                            + Add Showcase Card
                           </button>
                         </div>
                       </div>

@@ -39,7 +39,7 @@ export default async function AdminPagesList() {
               pages.map((page: any) => (
                 <tr key={page.id} className="hover:bg-gray-50/50 transition-colors">
                   <td className="px-8 py-6 font-bold text-gray-800">{page.title}</td>
-                  <td className="px-8 py-6 text-gray-500 font-mono text-sm">/{page.slug}</td>
+                  <td className="px-8 py-6 text-gray-500 font-mono text-sm">{page.slug === 'home' ? '/' : `/${page.slug}`}</td>
                   <td className="px-8 py-6">
                     <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest">
                       {page.template_type || "default"}

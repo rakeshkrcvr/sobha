@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 
-const items = [
+const defaultItems = [
   {
     title: "MEDIA CENTRE",
     description: "Your source for the latest news and updates from AR Creative Homes. Access our brand assets and news coverage.",
@@ -25,7 +25,15 @@ const items = [
   }
 ];
 
-export default function MoreAboutAR() {
+export default function MoreAboutAR({
+  title = "MORE ABOUT AR CREATIVE",
+  subtitle = "Premium Real Estate Brand in Greater Noida West & NCR",
+  items = defaultItems
+}: {
+  title?: string;
+  subtitle?: string;
+  items?: any[];
+}) {
   return (
     <section className="py-24 bg-[#f8f8f8]">
       <div className="container mx-auto px-6">
@@ -36,7 +44,7 @@ export default function MoreAboutAR() {
             viewport={{ once: true }}
             className="text-3xl md:text-4xl font-light tracking-[0.3em] text-black mb-4 uppercase"
           >
-            MORE ABOUT AR CREATIVE
+            {title}
           </motion.h2>
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
@@ -45,7 +53,7 @@ export default function MoreAboutAR() {
             transition={{ delay: 0.1 }}
             className="text-black/40 text-sm tracking-wide"
           >
-            Premium Real Estate Brand in Greater Noida West & NCR
+            {subtitle}
           </motion.p>
         </div>
 
