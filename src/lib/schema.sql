@@ -21,12 +21,14 @@ CREATE TABLE IF NOT EXISTS locations (
 CREATE TABLE IF NOT EXISTS projects (
     id SERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
+    slug VARCHAR(255) UNIQUE NOT NULL,
     image TEXT NOT NULL,
     category VARCHAR(50) DEFAULT 'Residential', -- Residential, Commercial
     location_name VARCHAR(255), -- Simple location name for now
     description TEXT,
     is_featured BOOLEAN DEFAULT FALSE,
     is_active BOOLEAN DEFAULT TRUE,
+    amenities JSONB DEFAULT '[]',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

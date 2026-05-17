@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { getProjects, addProject, updateProject, deleteProject } from "@/lib/actions";
-import { Plus, Edit2, Trash2, Building2, MapPin, Star, X, Loader2, Image as ImageIcon, ExternalLink } from "lucide-react";
+import { Plus, Edit2, Trash2, Building2, MapPin, Star, X, Loader2, Image as ImageIcon, ExternalLink, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { AMENITIES, getAmenityIcon } from "@/lib/amenities";
 
 export default function ProjectsAdmin() {
   const [projects, setProjects] = useState<any[]>([]);
@@ -16,7 +17,8 @@ export default function ProjectsAdmin() {
     category: "Residential",
     location_name: "",
     description: "",
-    is_featured: false
+    is_featured: false,
+    amenities: [] as string[]
   });
 
   useEffect(() => {
@@ -38,7 +40,8 @@ export default function ProjectsAdmin() {
         category: project.category,
         location_name: project.location_name,
         description: project.description || "",
-        is_featured: project.is_featured
+        is_featured: project.is_featured,
+        amenities: Array.isArray(project.amenities) ? project.amenities : []
       });
     } else {
       setEditingProject(null);
@@ -48,7 +51,8 @@ export default function ProjectsAdmin() {
         category: "Residential",
         location_name: "",
         description: "",
-        is_featured: false
+        is_featured: false,
+        amenities: []
       });
     }
     setIsModalOpen(true);
@@ -114,11 +118,11 @@ export default function ProjectsAdmin() {
               </div>
               <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
                 <a 
-                  href={`/residential?location=${encodeURIComponent(project.location_name || "")}`}
+                  href={`/projects/${project.slug}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-10 h-10 rounded-full bg-white text-black flex items-center justify-center hover:bg-primary hover:text-white transition-all cursor-pointer"
-                  title="View live website page"
+                  title="View live project page"
                 >
                   <ExternalLink size={18} />
                 </a>
@@ -161,7 +165,7 @@ export default function ProjectsAdmin() {
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="bg-white w-full max-w-2xl rounded-[40px] overflow-hidden relative z-10 shadow-2xl"
+              className="bg-white w-full max-w-2xl rounded-[40px] max-h-[90vh] overflow-y-auto custom-scrollbar relative z-10 shadow-2xl"
             >
               <div className="p-10">
                 <div className="flex justify-between items-center mb-8">
@@ -169,13 +173,13 @@ export default function ProjectsAdmin() {
                     <h2 className="text-2xl font-bold text-gray-800">
                       {editingProject ? "Edit Project" : "Add New Project"}
                     </h2>
-                    {editingProject && formData.location_name && (
+                    {editingProject && editingProject.slug && (
                       <a 
-                        href={`/residential?location=${encodeURIComponent(formData.location_name)}`}
+                        href={`/projects/${editingProject.slug}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-1.5 bg-gray-100 hover:bg-primary hover:text-white text-gray-600 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer"
-                        title="View live website page"
+                        title="View live project page"
                       >
                         <ExternalLink size={12} />
                         <span>View Live</span>
@@ -271,6 +275,63 @@ export default function ProjectsAdmin() {
                         </div>
                         <span className="text-sm font-bold text-gray-600 group-hover:text-black transition-colors">Featured Project</span>
                       </label>
+                    </div>
+                  </div>
+
+                  {/* Amenities Multi-Select Grid */}
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center">
+                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em]">
+                        Select Amenities ({formData.amenities.length} selected)
+                      </label>
+                      <div className="flex gap-3 text-[10px] font-bold uppercase tracking-widest">
+                        <button 
+                          type="button" 
+                          onClick={() => setFormData({ ...formData, amenities: AMENITIES.map(a => a.id) })}
+                          className="text-primary hover:opacity-80 transition-opacity cursor-pointer"
+                        >
+                          Select All
+                        </button>
+                        <span className="text-gray-200">|</span>
+                        <button 
+                          type="button" 
+                          onClick={() => setFormData({ ...formData, amenities: [] })}
+                          className="text-gray-400 hover:text-black transition-colors cursor-pointer"
+                        >
+                          Clear All
+                        </button>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-gray-50 border border-gray-100 rounded-2xl p-5 max-h-48 overflow-y-auto custom-scrollbar grid grid-cols-2 sm:grid-cols-3 gap-3">
+                      {AMENITIES.map((amenity) => {
+                        const IconComponent = getAmenityIcon(amenity.iconName);
+                        const isChecked = formData.amenities.includes(amenity.id);
+                        return (
+                          <div 
+                            key={amenity.id}
+                            onClick={() => {
+                              const newAmenities = isChecked
+                                ? formData.amenities.filter((id) => id !== amenity.id)
+                                : [...formData.amenities, amenity.id];
+                              setFormData({ ...formData, amenities: newAmenities });
+                            }}
+                            className={`flex items-center gap-2.5 p-3 rounded-xl cursor-pointer border select-none transition-all duration-200 hover:shadow-sm ${
+                              isChecked 
+                                ? "bg-primary/5 border-primary/20 text-primary" 
+                                : "bg-white border-gray-200/60 text-gray-600 hover:border-gray-300"
+                            }`}
+                          >
+                            <div className={`w-4 h-4 rounded flex items-center justify-center border transition-all ${
+                              isChecked ? "bg-primary border-primary text-white" : "border-gray-300 bg-white"
+                            }`}>
+                              {isChecked && <Check size={10} strokeWidth={4} className="text-white" />}
+                            </div>
+                            <IconComponent size={14} className={isChecked ? "text-primary" : "text-gray-400"} />
+                            <span className="text-[11px] font-semibold tracking-wide truncate">{amenity.name}</span>
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
 

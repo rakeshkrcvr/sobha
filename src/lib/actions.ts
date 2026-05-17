@@ -40,26 +40,74 @@ export async function deleteHeroSlide(id: number) {
 
 // --- Projects Actions ---
 
+function slugify(text: string): string {
+  return text
+    .toString()
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, '-')           // Replace spaces with -
+    .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
+    .replace(/\-\-+/g, '-')         // Replace multiple - with single -
+    .replace(/^-+/, '')             // Trim - from start
+    .replace(/-+$/, '');            // Trim - from end
+}
+
 export async function getProjects() {
   noStore();
   return await sql`SELECT * FROM projects ORDER BY created_at DESC`;
 }
 
+export async function getProjectById(id: number) {
+  noStore();
+  const result = await sql`SELECT * FROM projects WHERE id = ${id}`;
+  return result[0] || null;
+}
+
+export async function getProjectBySlug(slug: string) {
+  noStore();
+  const result = await sql`SELECT * FROM projects WHERE slug = ${slug}`;
+  return result[0] || null;
+}
+
 export async function addProject(data: any) {
+  const baseSlug = slugify(data.title || 'project');
+  let slug = baseSlug;
+  let counter = 1;
+  while (true) {
+    const existing = await sql`SELECT id FROM projects WHERE slug = ${slug}`;
+    if (existing.length === 0) break;
+    slug = `${baseSlug}-${counter}`;
+    counter++;
+  }
+
+  const amenitiesJson = Array.isArray(data.amenities) ? JSON.stringify(data.amenities) : '[]';
+
   await sql`
-    INSERT INTO projects (title, image, category, location_name, description, is_featured)
-    VALUES (${data.title}, ${data.image}, ${data.category}, ${data.location_name}, ${data.description}, ${data.is_featured})
+    INSERT INTO projects (title, slug, image, category, location_name, description, is_featured, amenities)
+    VALUES (${data.title}, ${slug}, ${data.image}, ${data.category}, ${data.location_name}, ${data.description}, ${data.is_featured}, ${amenitiesJson})
   `;
   revalidatePath("/");
   revalidatePath("/residential");
 }
 
 export async function updateProject(id: number, data: any) {
+  const baseSlug = slugify(data.title || 'project');
+  let slug = baseSlug;
+  let counter = 1;
+  while (true) {
+    const existing = await sql`SELECT id FROM projects WHERE slug = ${slug} AND id != ${id}`;
+    if (existing.length === 0) break;
+    slug = `${baseSlug}-${counter}`;
+    counter++;
+  }
+
+  const amenitiesJson = Array.isArray(data.amenities) ? JSON.stringify(data.amenities) : '[]';
+
   await sql`
     UPDATE projects 
-    SET title = ${data.title}, image = ${data.image}, category = ${data.category}, 
+    SET title = ${data.title}, slug = ${slug}, image = ${data.image}, category = ${data.category}, 
         location_name = ${data.location_name}, description = ${data.description}, 
-        is_featured = ${data.is_featured}
+        is_featured = ${data.is_featured}, amenities = ${amenitiesJson}
     WHERE id = ${id}
   `;
   revalidatePath("/");
